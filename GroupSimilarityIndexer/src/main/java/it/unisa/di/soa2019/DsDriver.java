@@ -51,7 +51,7 @@ public class DsDriver {
         j1.setMapOutputValueClass(MapWritable.class);
         j1.setOutputKeyClass(Text.class);
         j1.setOutputValueClass(Text.class);
-        j1.setNumReduceTasks(24);
+        j1.setNumReduceTasks(1);
 //        j1.setOutputFormatClass(SequenceFileOutputFormat.class);
         Date date = Calendar.getInstance().getTime();
         DateFormat dateFormat = new SimpleDateFormat("yyyymmdd_hhmmss");
@@ -109,7 +109,7 @@ public class DsDriver {
         j3.setOutputKeyClass(StringWritable.class);
         j3.setOutputValueClass(DoubleWritable.class);
         j3.setInputFormatClass(SequenceFileInputFormat.class);
-        j3.setNumReduceTasks(24);
+        j3.setNumReduceTasks(1);
 
         FileInputFormat.addInputPath(j3, new Path(args[1] + strDate + "indexer"));
         FileOutputFormat.setOutputPath(j3, new Path(args[1] + strDate + "final"));
