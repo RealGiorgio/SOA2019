@@ -4,7 +4,7 @@
 
     <groupId>it.unisa.di.soa2019</groupId>
     <artifactId>similarity</artifactId>
-    <version>0.1.5</version>
+    <version>0.1.7</version>
     <build>
         <plugins>
             <plugin>
