@@ -31,26 +31,30 @@ public class DsDriver {
         Configuration conf = new Configuration();
         String input = args[0];
 
-        Job j1 = Job.getInstance(conf, "DocSim - Group partitioning");
 
-        conf.set("mapreduce.map.memory.mb", "2048");
-        conf.set("mapreduce.map.java.opts", "-Xmx1638m");
+
+        conf.set("mapreduce.map.memory.mb", "1536");
+        conf.set("mapreduce.map.java.opts", "-Xmx1228m");
         conf.set("mapreduce.reduce.memory.mb", "2048");
         conf.set("mapreduce.reduce.java.opts", "-Xmx1638m");
         conf.set("mapreduce.map.cpu.vcores", "1");
         conf.set("mapreduce.reduce.cpu.vcores", "1");
-        j1.setJarByClass(DsDriver.class);
-        j1.setMapperClass(GroupPartitioningMapper.class);
-        j1.setReducerClass(GroupPartitioningReducer.class);
+        conf.set("mapred.max.split.size", "8388608");
+        conf.set("mapreduce.input.fileinputformat.split.maxsize", "8388608"); // 8MB
+
+        Job j1 = Job.getInstance(conf, "DocSim - Group partitioning");
         if (USE_NLINE_SPLITTER) {
             j1.setInputFormatClass(NLineInputFormat.class);
             NLineInputFormat.addInputPath(j1, new Path(input));
-            j1.getConfiguration().setInt("mapreduce.input.lineinputformat.linespermap", 662393); // 127179552(total msgs)/192(cores)
-
+            j1.getConfiguration().setInt("mapreduce.input.lineinputformat.linespermap", 331196); // 127179552(total msgs)/192(cores)
         } else {
             FileInputFormat.addInputPath(j1, new Path(input));
-            conf.set("mapreduce.input.fileinputformat.split.maxsize", "33554432"); // 32MB
         }
+
+        j1.setJarByClass(DsDriver.class);
+        j1.setMapperClass(GroupPartitioningMapper.class);
+        j1.setReducerClass(GroupPartitioningReducer.class);
+
 
         j1.setMapOutputKeyClass(Text.class);
         j1.setMapOutputValueClass(MapWritable.class);
@@ -91,19 +95,19 @@ public class DsDriver {
         j2.setOutputFormatClass(SequenceFileOutputFormat.class);
         FileInputFormat.addInputPath(j2, new Path(args[1] + strDate + "inter"));
         FileOutputFormat.setOutputPath(j2, new Path(args[1] + strDate + "indexer"));
-        j2.setNumReduceTasks(24);
+        j2.setNumReduceTasks(96);
         err = j2.waitForCompletion(true);
         if (!err) {
             System.exit(-1);
         }
 
         conf = new Configuration();
-//        conf.set("mapreduce.input.fileinputformat.split.maxsize", "8388608");
+        conf.set("mapreduce.input.fileinputformat.split.maxsize", "1048576");
         conf.set("mapreduce.map.memory.mb", "2048");
         conf.set("mapreduce.map.java.opts", "-Xmx1638m");
         conf.set("mapreduce.reduce.memory.mb", "4096");
         conf.set("mapreduce.reduce.java.opts", "-Xmx3286m");
-        conf.set("mapred.max.split.size", "33554432");
+        conf.set("mapred.max.split.size", "1048576");
         conf.set("mapreduce.map.cpu.vcores", "1");
         conf.set("mapreduce.reduce.cpu.vcores", "1");
         Job j3 = Job.getInstance(conf, "DocSim - Similarity");

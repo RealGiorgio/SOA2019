@@ -31,7 +31,7 @@ public class SimilarityMapper extends Mapper<Text, MapWritable, StringWritable, 
                 Writable groupJID = keys.get(j);
                 DoubleWritable frequencyJ = (DoubleWritable) value.get(keys.get(j));
                 double freq = frequencyI.get() * frequencyJ.get();
-                if (freq > 0.7) {
+                if (freq > 0.5) {
                     DoubleWritable w = new DoubleWritable(freq);
                     StringWritable sp = new StringWritable(groupIID.toString(), groupJID.toString());
                     context.write(sp, w);
